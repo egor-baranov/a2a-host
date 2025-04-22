@@ -1,7 +1,14 @@
-from starlette.applications import Starlette
-from starlette.responses import JSONResponse
+import json
+import logging
+from typing import AsyncIterable, Any
+
+from fastapi import FastAPI
+from pydantic import ValidationError
 from sse_starlette.sse import EventSourceResponse
 from starlette.requests import Request
+from starlette.responses import JSONResponse
+
+from common.server.task_manager import TaskManager
 from common.types import (
     A2ARequest,
     JSONRPCResponse,
@@ -17,31 +24,25 @@ from common.types import (
     TaskResubscriptionRequest,
     SendTaskStreamingRequest,
 )
-from pydantic import ValidationError
-import json
-from typing import AsyncIterable, Any
-from common.server.task_manager import TaskManager
-
-import logging
 
 logger = logging.getLogger(__name__)
 
 
 class A2AServer:
     def __init__(
-        self,
-        host="0.0.0.0",
-        port=5000,
-        endpoint="/",
-        agent_card: AgentCard = None,
-        task_manager: TaskManager = None,
+            self,
+            host="0.0.0.0",
+            port=5000,
+            endpoint="/",
+            agent_card: AgentCard = None,
+            task_manager: TaskManager = None,
     ):
         self.host = host
         self.port = port
         self.endpoint = endpoint
         self.task_manager = task_manager
         self.agent_card = agent_card
-        self.app = Starlette()
+        self.app = FastAPI()
         self.app.add_route(self.endpoint, self._process_request, methods=["POST"])
         self.app.add_route(
             "/.well-known/agent.json", self._get_agent_card, methods=["GET"]
