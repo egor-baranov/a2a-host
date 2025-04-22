@@ -1,6 +1,6 @@
 # Introduction
 
-A python package that is making A2A host creation and deployment easy
+A python package that is making A2A host creation and deployment easy with conversation manager and dynamic model configuration
 
 
 # Examples
