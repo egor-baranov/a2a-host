@@ -30,8 +30,8 @@ class ConversationServer:
     agents and provide details about the executions.
     """
 
-    def __init__(self, router: APIRouter):
-        self.manager: ApplicationManager = ADKHostManager()
+    def __init__(self, router: APIRouter, application_manager: ApplicationManager):
+        self.manager: ApplicationManager = application_manager
         self._file_cache: dict[str, FilePart] = {}
         self._message_to_cache: dict[str, str] = {}
 

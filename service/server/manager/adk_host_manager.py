@@ -48,7 +48,7 @@ class ADKHostManager(ApplicationManager):
     _agents: list[AgentCard]
     _task_map: dict[str, str]
 
-    def __init__(self):
+    def __init__(self, host_agent: HostAgent):
         self._conversations = []
         self._messages = []
         self._tasks = []
@@ -56,13 +56,17 @@ class ADKHostManager(ApplicationManager):
         self._pending_message_ids = []
         self._agents = []
         self._artifact_chunks = {}
+
         self._session_service = InMemorySessionService()
         self._artifact_service = InMemoryArtifactService()
         self._memory_service = InMemoryMemoryService()
-        self._host_agent = HostAgent([], self.task_callback)
+
+        host_agent.task_callback = self.task_callback
+        self._host_agent = host_agent
         self.user_id = "test_user"
         self.app_name = "A2A"
         self._initialize_host()
+
         # Map of message id to task id
         self._task_map = {}
         # Map to manage 'lost' message ids until protocol level id is introduced
